@@ -2,15 +2,20 @@ const fetchWithAuth = async (url, options = {}) => {
   const authTokens = localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null;
   const token = authTokens ? authTokens.accessToken : null;
 
-  const headers = {
-    'Content-Type': 'application/json',
+  const defaultHeaders = {
     ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    'Content-Type': 'application/json'
+  };
+
+  const headers = {
+    ...defaultHeaders,
+    ...(options.headers || {}) // fusionne avec les headers envoyés dans options
   };
 
   try {
     const response = await fetch(url, {
       ...options,
-      headers: headers,
+      headers
     });
 
     if (!response.ok) {
@@ -27,5 +32,6 @@ const fetchWithAuth = async (url, options = {}) => {
     throw error;
   }
 };
+
 
 export default fetchWithAuth;
