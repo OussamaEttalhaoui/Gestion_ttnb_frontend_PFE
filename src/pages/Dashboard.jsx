@@ -21,7 +21,6 @@ export default function Dashboard() {
   const isHomePage = location.pathname === '/home';
   const isProfilePage = location.pathname === '/profile';
 
-  const { authTokens } = useAuth();
 
 
   // useEffect(() => {
@@ -31,10 +30,12 @@ export default function Dashboard() {
   //   }
   // }, [navigate, isLoginPage]);
   useEffect(() => {
-  if (!authTokens && !isLoginPage) {
+  const storedTokens = localStorage.getItem('authTokens');
+  const accessToken = storedTokens ? JSON.parse(storedTokens).accessToken : null;
+  if (!accessToken && !isLoginPage) {
     navigate('/login');
   }
-}, [authTokens, navigate, isLoginPage]);
+}, [navigate, isLoginPage]);
 
   // N'affiche Navbar et Sidebar que si l'utilisateur est authentifié et n'est pas sur la page de login ou home
   const showNavbarSidebar = !isLoginPage && !isHomePage;
