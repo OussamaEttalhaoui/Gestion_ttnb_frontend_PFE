@@ -24,7 +24,8 @@ export default function Navbar() {
   // 🔔 STOMP notifications (LOGIQUE DE PARSING CORRIGÉE)
   useEffect(() => {
     if (stompClientRef.current) return;
-    const socket = new SockJS(`${API_BASE_URL}/ws`);
+    // const socket = new SockJS(`${API_BASE_URL}/ws`);
+    const socket = new SockJS(`${API_BASE_URL.replace(/^http/, 'https')}/ws`);
     const client = over(socket);
     stompClientRef.current = client;
 
