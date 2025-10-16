@@ -152,7 +152,8 @@ const Auth = () => {
     setError(null);
     const data = await loginUser(form);
     if (data) {
-      navigate('/home');
+      // navigate('/home');
+      navigate('/home', { replace: true });
     } else {
       setError('Identifiants invalides');
     }

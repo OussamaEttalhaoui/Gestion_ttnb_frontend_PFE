@@ -21,12 +21,20 @@ export default function Dashboard() {
   const isHomePage = location.pathname === '/home';
   const isProfilePage = location.pathname === '/profile';
 
+  const { authTokens } = useAuth();
+
+
+  // useEffect(() => {
+  //   const accessToken = localStorage.getItem('accessToken');
+  //   if (!accessToken && !isLoginPage) {
+  //     navigate('/login'); // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
+  //   }
+  // }, [navigate, isLoginPage]);
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken && !isLoginPage) {
-      navigate('/login'); // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
-    }
-  }, [navigate, isLoginPage]);
+  if (!authTokens && !isLoginPage) {
+    navigate('/login');
+  }
+}, [authTokens, navigate, isLoginPage]);
 
   // N'affiche Navbar et Sidebar que si l'utilisateur est authentifié et n'est pas sur la page de login ou home
   const showNavbarSidebar = !isLoginPage && !isHomePage;
