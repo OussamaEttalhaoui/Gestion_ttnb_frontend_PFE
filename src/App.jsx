@@ -7,9 +7,11 @@ import { AuthProvider, useAuth } from './pages/Auth';
 
 function App() {
   return (
+  <Router>
     <AuthProvider>
       <AppContent />
     </AuthProvider>
+  </Router>
   );
 }
 
@@ -18,7 +20,6 @@ function AppContent() {
   const isAuthenticated = !!authTokens;
 
   return (
-    <Router>
       <Routes>
         <Route path="/login" element={<Auth />} />
         {/* <Route path="/register" element={<Register />} /> */}
@@ -33,7 +34,6 @@ function AppContent() {
           }
         />
       </Routes>
-    </Router>
   );
 }
 

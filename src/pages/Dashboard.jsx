@@ -13,6 +13,8 @@ import Profile from './Profile';
 import Declaration from './Declaration'; 
 import Utilisateurs from './utilisateurs'
 import Exoneration from  './Exoneration';
+import { useAuth } from './Auth'
+
 
 export default function Dashboard() {
   const location = useLocation();
@@ -21,6 +23,7 @@ export default function Dashboard() {
   const isHomePage = location.pathname === '/home';
   const isProfilePage = location.pathname === '/profile';
 
+  const { authTokens } = useAuth();
 
 
   useEffect(() => {
