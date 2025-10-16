@@ -23,12 +23,6 @@ export default function Dashboard() {
 
 
 
-  // useEffect(() => {
-  //   const accessToken = localStorage.getItem('accessToken');
-  //   if (!accessToken && !isLoginPage) {
-  //     navigate('/login'); // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
-  //   }
-  // }, [navigate, isLoginPage]);
   useEffect(() => {
   const storedTokens = localStorage.getItem('authTokens');
   const accessToken = storedTokens ? JSON.parse(storedTokens).accessToken : null;
@@ -36,6 +30,13 @@ export default function Dashboard() {
     navigate('/login');
   }
 }, [navigate, isLoginPage]);
+
+useEffect(() => {
+  if (!authTokens) {
+    navigate('/login', { replace: true });
+  }
+}, [authTokens, navigate]);
+
 
   // N'affiche Navbar et Sidebar que si l'utilisateur est authentifié et n'est pas sur la page de login ou home
   const showNavbarSidebar = !isLoginPage && !isHomePage;

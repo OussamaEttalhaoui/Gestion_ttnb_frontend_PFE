@@ -8,6 +8,7 @@ import API_BASE_URL from '../utils/apiConfig'
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate(); 
   const [authTokens, setAuthTokens] = useState(() =>
     localStorage.getItem('authTokens')
       ? JSON.parse(localStorage.getItem('authTokens'))
@@ -72,42 +73,85 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('authTokens');
   };
 
-  const updateToken = async () => {
-    if (!authTokens || !authTokens.refreshToken) {
-      logoutUser();
-      return null;
-    }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/refresh?refreshToken=${authTokens.refreshToken}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+const updateToken = async () => {
+  if (!authTokens || !authTokens.refreshToken) {
+    logoutAndRedirect();
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/refresh?refreshToken=${authTokens.refreshToken}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setAuthTokens(data);
+      const decodedToken = jwtDecode(data.accessToken);
+      setUser({
+        ...decodedToken,
+        role: decodedToken.role,
+        permissions: decodedToken.permissions || [],
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAuthTokens(data);
-        const decodedToken = jwtDecode(data.accessToken);
-        setUser({
-          ...decodedToken,
-          role: decodedToken.role,
-          permissions: decodedToken.permissions || [], // Récupérer les permissions depuis le token
-        });
-        localStorage.setItem('authTokens', JSON.stringify(data));
-        return data;
-      } else {
-        console.error('Failed to refresh token:', response.status);
-        logoutUser();
-        return null;
-      }
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-      logoutUser();
+      localStorage.setItem('authTokens', JSON.stringify(data));
+      return data;
+    } else {
+      // refresh token invalide ou expiré
+      logoutAndRedirect();
       return null;
     }
-  };
+  } catch (error) {
+    console.error('Erreur lors du refresh du token:', error);
+    logoutAndRedirect();
+    return null;
+  }
+};
+
+// 🔹 fonction utilitaire pour déconnexion + redirection
+const logoutAndRedirect = () => {
+  logoutUser();
+  navigate('/login', { replace: true });
+};
+
+
+  // const updateToken = async () => {
+  //   if (!authTokens || !authTokens.refreshToken) {
+  //     logoutUser();
+  //     return null;
+  //   }
+
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/auth/refresh?refreshToken=${authTokens.refreshToken}`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setAuthTokens(data);
+  //       const decodedToken = jwtDecode(data.accessToken);
+  //       setUser({
+  //         ...decodedToken,
+  //         role: decodedToken.role,
+  //         permissions: decodedToken.permissions || [], // Récupérer les permissions depuis le token
+  //       });
+  //       localStorage.setItem('authTokens', JSON.stringify(data));
+  //       return data;
+  //     } else {
+  //       console.error('Failed to refresh token:', response.status);
+  //       logoutUser();
+  //       return null;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error refreshing token:', error);
+  //     logoutUser();
+  //     return null;
+  //   }
+  // };
 
   useEffect(() => {
     const interval = setInterval(() => {
