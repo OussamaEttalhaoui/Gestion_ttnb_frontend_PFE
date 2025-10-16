@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import fetchWithAuth from '../utils/api'; // Assurez-vous que le chemin est correct
 import { useAuth } from '../pages/Auth';  // Assurez-vous que le chemin est correct
-
-const API_BASE_URL = 'http://localhost:8036';
+import API_BASE_URL from '../utils/apiConfig';
 
 const initialFormState = {
     nom: '',

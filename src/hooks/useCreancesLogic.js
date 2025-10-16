@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import dayjs from 'dayjs';
 import fetchWithAuth from '../utils/api'; 
+import API_BASE_URL from '../utils/apiConfig';
 
 export function useCreancesLogic(user, getComparator, getBienIdentifier) {
   // ------------------------- Déclarations des États (State) -------------------------
@@ -51,7 +52,7 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
 
   const fetchCreances = useCallback(async () => { 
     try {
-      const res = await fetchWithAuth('http://localhost:8036/api/creances');
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/creances`);
       const data = await res.json();
       setCreances(data);
     } catch (error) {
@@ -61,7 +62,7 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
 
   const fetchBiens = useCallback(async () => { 
     try {
-      const res = await fetchWithAuth('http://localhost:8036/api/biens');
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/biens`);
       const data = await res.json();
       setBiens(data);
     } catch (error) {
@@ -71,7 +72,7 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
 
   const fetchTauxZones = useCallback(async () => { 
     try {
-      const res = await fetchWithAuth('http://localhost:8036/api/taux-zones');
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/taux-zones`);
       const data = await res.json();
       const tauxMap = {};
       data.forEach(item => {
@@ -182,13 +183,13 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
       let res;
       // Logique d'appel API pour Création/Modification (avec téléchargement PDF)
       if (selected) {
-        res = await fetchWithAuth(`http://localhost:8036/api/creances/pdf/${selected.id}?identifiantBien=${form.identifiantBien}`, {
+        res = await fetchWithAuth(`${API_BASE_URL}/api/creances/pdf/${selected.id}?identifiantBien=${form.identifiantBien}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToSend),
         });
       } else {
-        res = await fetchWithAuth(`http://localhost:8036/api/creances/pdf?identifiantBien=${form.identifiantBien}`, {
+        res = await fetchWithAuth(`${API_BASE_URL}/api/creances/pdf?identifiantBien=${form.identifiantBien}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToSend),
@@ -233,7 +234,7 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
     }
     if (window.confirm('Supprimer cette créance ?')) {
       try {
-        await fetchWithAuth(`http://localhost:8036/api/creances/${id}`, {
+        await fetchWithAuth(`${API_BASE_URL}/api/creances/${id}`, {
           method: 'DELETE',
         });
         fetchCreances();
@@ -274,7 +275,7 @@ const handleTauxChange = useCallback((zone, taux) => {
     try {
       // Logique d'appel API pour l'enregistrement des taux
       for (const zone in tauxZones) {
-        await fetchWithAuth('http://localhost:8036/api/taux-zones', {
+        await fetchWithAuth(`${API_BASE_URL}/api/taux-zones`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ zone: zone, taux: tauxZones[zone] }),
@@ -316,7 +317,7 @@ const handleTauxChange = useCallback((zone, taux) => {
     setErrorMessage('');
     try {
       // Logique d'appel API pour le calcul
-      const res = await fetchWithAuth('http://localhost:8036/api/creances/calcul', {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/creances/calcul`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

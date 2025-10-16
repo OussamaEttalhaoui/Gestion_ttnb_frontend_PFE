@@ -16,18 +16,20 @@ import {
   alpha,
   Chip,
   Divider,
-  Alert // Ajout de Alert pour l'erreur
+  Alert 
 } from "@mui/material";
 import fetchWithAuth from "../utils/api";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import LayersIcon from '@mui/icons-material/Layers';
+import API_BASE_URL from '../utils/apiConfig'
+
 
 // Google Maps
 import { GoogleMap, LoadScript, Marker, Circle, InfoWindow, Polygon } from "@react-google-maps/api";
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyBNr8O-aDEYJG1OVm4FK_ESZ2IMxvCIFHg";
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const containerStyle = {
   width: "100%",
@@ -70,7 +72,7 @@ export default function SituationMap() {
   useEffect(() => {
     const fetchPolygon = async () => {
       try {
-        const res = await fetchWithAuth("http://localhost:8036/api/zones/al_ouidane");
+        const res = await fetchWithAuth(`${API_BASE_URL}/api/zones/al_ouidane`);
         const data = await res.json();
         setAlOuidanePolygon(data.polygon); // [{lat, lng}, {lat, lng}, ...]
       } catch (err) {
@@ -87,7 +89,7 @@ export default function SituationMap() {
     setError("");
     setResult(null);
     try {
-      const res = await fetchWithAuth("http://localhost:8036/api/zones/classifier", {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/zones/classifier`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ x, y, rayon }),
@@ -421,332 +423,3 @@ export default function SituationMap() {
     </Box>
   );
 }
-
-
-// import React, { useState, useEffect } from "react";
-// import {
-//   Box,
-//   Paper,
-//   Typography,
-//   TextField,
-//   Button,
-//   CircularProgress,
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TableHead,
-//   TableRow,
-// } from "@mui/material";
-// import fetchWithAuth from "../utils/api";
-// import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-// import CancelIcon from "@mui/icons-material/Cancel";
-// import proj4 from "proj4";
-
-// // Google Maps
-// import { GoogleMap, LoadScript, Marker, Circle, InfoWindow, Polygon } from "@react-google-maps/api";
-
-// const GOOGLE_MAPS_API_KEY = "AIzaSyBNr8O-aDEYJG1OVm4FK_ESZ2IMxvCIFHg";
-
-// const containerStyle = {
-//   width: "100%",
-//   height: "400px",
-//   borderRadius: "12px",
-//   boxShadow: "0 2px 8px #0002",
-// };
-
-
-
-// export default function SituationMap() {
-//   const [x, setX] = useState("");
-//   const [y, setY] = useState("");
-//   const [rayon, setRayon] = useState(2000);
-//   const [result, setResult] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState("");
-//   const [selectedPlace, setSelectedPlace] = useState(null);
-
-//   const [alOuidanePolygon, setAlOuidanePolygon] = useState([]);
-
-//   useEffect(() => {
-//     const fetchPolygon = async () => {
-//       try {
-//         const res = await fetchWithAuth("http://localhost:8036/api/zones/al_ouidane");
-//         const data = await res.json();
-//         setAlOuidanePolygon(data.polygon); // [{lat, lng}, {lat, lng}, ...]
-//       } catch (err) {
-//         console.error("Erreur chargement polygone:", err);
-//       }
-//     };
-//     fetchPolygon();
-//   }, []);
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
-//     setError("");
-//     setResult(null);
-//     try {
-//       const res = await fetchWithAuth("http://localhost:8036/api/zones/classifier", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ x, y, rayon }),
-//       });
-//       if (!res.ok) throw new Error("Erreur serveur");
-//       const data = await res.json();
-//       setResult(data);
-//     } catch (err) {
-//       setError("Erreur lors de la classification");
-//     }
-//     setLoading(false);
-//   };
-
-//   const translateHealthType = (type) => {
-//     switch (type) {
-//       case "hospital": return "Hôpitaux";
-//       case "doctor": return "Cabinets";
-//       default: return type;
-//     }
-//   };
-
-//   const translateSchoolType = (type) => {
-//     switch (type) {
-//       case "primary": return "Primaire";
-//       case "college": return "Collège";
-//       case "lycee": return "Lycée";
-//       case "maternelle": return "Maternelle";
-//       case "unknown": return "Inconnu";
-//       default: return type;
-//     }
-//   };
-
-//   // Centre initial = premier point du polygone si pas de résultat
-//   const center = result ? { lat: result.latitude, lng: result.longitude } : alOuidanePolygon[0];
-
-//   return (
-//     <Box sx={{ display: "flex", justifyContent: "center", mt: 6, flexDirection: "column" }}>
-//       <Box sx={{ display: "flex", justifyContent: "center", gap: 4 }}>
-//         {/* === FORMULAIRE === */}
-//         <Paper sx={{ p: 4, minWidth: 400, maxWidth: 500 }}>
-//           <Typography variant="h5" sx={{ mb: 3 }}>Classification d'une zone</Typography>
-//           <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-//             <TextField label="Coordonnée X (Lambert)" type="number" value={x} onChange={(e) => setX(e.target.value)} required />
-//             <TextField label="Coordonnée Y (Lambert)" type="number" value={y} onChange={(e) => setY(e.target.value)} required />
-//             <TextField label="Rayon (mètres)" type="number" value={rayon} onChange={(e) => setRayon(e.target.value)} required />
-//             <Button type="submit" variant="contained" color="primary" disabled={loading}>
-//               {loading ? <CircularProgress size={24} /> : "Classifier"}
-//             </Button>
-//           </Box>
-//           {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
-//           {result && (
-//             <Box sx={{ mt: 4 }}>
-//               <Typography variant="h6" sx={{ color: result.couleur }}>Catégorie : {result.categorie}</Typography>
-//               <Typography sx={{ display: "flex", alignItems: "center" }}>
-//                 Centres de santé : {result.health ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-//               </Typography>
-//               <Typography sx={{ display: "flex", alignItems: "center" }}>
-//                 Établissements d’enseignement : {result.school ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-//               </Typography>
-//               <Typography sx={{ display: "flex", alignItems: "center" }}>
-//                 Réseaux routiers : {result.roads ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-//               </Typography>
-//               <Typography sx={{ display: "flex", alignItems: "center" }}>
-//                 Électricité : {result.electricité ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-//               </Typography>
-//               <Typography sx={{ display: "flex", alignItems: "center" }}>
-//                 Eau : {result.eau ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-//               </Typography>
-//               <Typography sx={{ display: "flex", alignItems: "center" }}>
-//                 Transports publics : {result.transport ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-//               </Typography>
-//             </Box>
-//           )}
-//         </Paper>
-
-//         {/* === CARTE INTERACTIVE === */}
-//         <Box sx={{ minWidth: 400, maxWidth: 600 }}>
-//           <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={["places"]}>
-//             <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={13} mapTypeId="satellite">
-              
-//               {/* Polygone Al Ouidane toujours visible */}
-//               <Polygon
-//                 paths={alOuidanePolygon}
-//                 options={{
-//                   strokeColor: "#0000FF",
-//                   strokeOpacity: 0.9,
-//                   strokeWeight: 2,
-//                   fillColor: "#D3D3D3",
-//                   fillOpacity: 0.4,
-//                 }}
-//               />
-
-//               {/* Marqueur + Cercle */}
-//               {result && (
-//                 <>
-//                   <Marker position={center} />
-//                   <Circle
-//                     center={center}
-//                     radius={result.rayon}
-//                     options={{
-//                       strokeColor:
-//                         result.couleur === "green"
-//                           ? "#00FF00"
-//                           : result.couleur === "orange"
-//                           ? "#FFA500"
-//                           : result.couleur === "red"
-//                           ? "#FF0000"
-//                           : "#0000FF",
-//                       strokeOpacity: 0.8,
-//                       strokeWeight: 2,
-//                       fillColor:
-//                         result.couleur === "green"
-//                           ? "#00FF00"
-//                           : result.couleur === "orange"
-//                           ? "#FFA500"
-//                           : result.couleur === "red"
-//                           ? "#FF0000"
-//                           : "#0000FF",
-//                       fillOpacity: 0.2,
-//                     }}
-//                   />
-//                   {/* Markers des écoles */}
-//                   {result.google_places?.schools &&
-//                     Object.values(result.google_places.schools).map((schoolType) =>
-//                       schoolType.places.map((place) => (
-//                         <Marker
-//                           key={place.name}
-//                           position={{ lat: place.lat, lng: place.lon }}
-//                           label={{
-//                             text: "SC",
-//                             color: "blue",
-//                             fontWeight: "bold"
-//                           }}
-//                           onClick={() => setSelectedPlace(place)}
-//                         />
-//                       ))
-//                     )}
-//                   {/* Markers des centres de santé */}
-//                   {result.google_places?.health &&
-//                     Object.values(result.google_places.health).map((healthType) =>
-//                       healthType.places.map((place) => (
-//                         <Marker
-//                           key={place.name}
-//                           position={{ lat: place.lat, lng: place.lon }}
-//                           label={{
-//                             text: "H",
-//                             color: "white",
-//                             fontWeight: "bold"
-//                           }}
-//                           onClick={() => setSelectedPlace(place)}
-//                         />
-//                       ))
-//                     )}
-//                     {/* Markers des transports */}
-//                     {result.google_places?.transport &&
-//                       result.google_places.transport.map((place) => (
-//                         <Marker
-//                           key={place.name}
-//                           position={{ lat: place.lat, lng: place.lon }}
-//                           label={{
-//                             text: "A.BUS",
-//                             color: "yellow",
-//                             fontWeight: "bold"
-//                           }}
-//                           onClick={() => setSelectedPlace(place)}
-//                         />
-//                     ))}
-//                 </>
-//               )}
-
-//               {/* InfoWindow */}
-//               {selectedPlace && (
-//                 <InfoWindow
-//                   position={{ lat: selectedPlace.lat, lng: selectedPlace.lon }}
-//                   onCloseClick={() => setSelectedPlace(null)}
-//                 >
-//                   <div>
-//                     <strong>{selectedPlace.name}</strong>
-//                     <br />
-//                     ({selectedPlace.lat}, {selectedPlace.lon})
-//                   </div>
-//                 </InfoWindow>
-//               )}
-//             </GoogleMap>
-//           </LoadScript>
-//         </Box>
-//       </Box>
-
-//       {/* === TABLEAUX === */}
-//       {result && result.google_places && (
-//         <Box sx={{ width: "100%", mt: 4 }}>
-//           {/* Centres de santé */}
-//           {result.google_places.health && (
-//             <TableContainer component={Paper} sx={{ mb: 2 }}>
-//               <Typography variant="h6" sx={{ p: 2 }}>Centres de santé</Typography>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell>Type</TableCell>
-//                     <TableCell>Nombre</TableCell>
-//                     <TableCell>Liste</TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {Object.entries(result.google_places.health).map(([type, data]) => (
-//                     <TableRow key={type}>
-//                       <TableCell>{translateHealthType(type)}</TableCell>
-//                       <TableCell>{data.count}</TableCell>
-//                       <TableCell>
-//                         {data.places.map((place) => (
-//                           <Typography key={place.name}>
-//                             ({place.lat}, {place.lon}) {place.name}
-//                           </Typography>
-//                         ))}
-//                       </TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           )}
-
-//           {/* Établissements scolaires */}
-//           {result.google_places.schools && (
-//             <TableContainer component={Paper} sx={{ mb: 2 }}>
-//               <Typography variant="h6" sx={{ p: 2 }}>Établissements d'enseignement</Typography>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell>Type</TableCell>
-//                     <TableCell>Nombre</TableCell>
-//                     <TableCell>Liste</TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {Object.entries(result.google_places.schools).map(([type, data]) => (
-//                     <TableRow key={type}>
-//                       <TableCell>{translateSchoolType(type)}</TableCell>
-//                       <TableCell>{data.count}</TableCell>
-//                       <TableCell>
-//                         {data.places.map((place) => (
-//                           <Typography key={place.name}>
-//                             ({place.lat}, {place.lon}) {place.name}
-//                           </Typography>
-//                         ))}
-//                       </TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           )}
-//         </Box>
-//       )}
-//     </Box>
-//   );
-// }
-
-
-
-
-

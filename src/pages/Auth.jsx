@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { Paper, Box, Typography, TextField, Button, Grid } from '@mui/material';
 import logoMaroc from '../assets/royaume_du_maroc.png';
+import API_BASE_URL from '../utils/apiConfig'
 
 const AuthContext = createContext(null);
 
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 
   const loginUser = async (credentials) => {
     try {
-      const response = await fetch('http://localhost:8036/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +79,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8036/auth/refresh?refreshToken=${authTokens.refreshToken}`, {
+      const response = await fetch(`${API_BASE_URL}/auth/refresh?refreshToken=${authTokens.refreshToken}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

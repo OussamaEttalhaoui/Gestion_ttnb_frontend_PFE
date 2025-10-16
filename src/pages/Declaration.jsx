@@ -10,6 +10,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import { Download as DownloadIcon } from '@mui/icons-material';
+import API_BASE_URL from '../utils/apiConfig'
+
 
 // --- Styles cohérents avec le thème bleu/épuré ---
 const primaryColor = '#1976d2';
@@ -44,7 +46,7 @@ export default function Declaration() {
         params.append('dateMutation', dayjs(dateMutation).format('YYYY-MM-DD'));
       }
 
-      const res = await fetchWithAuth(`http://localhost:8036/api/declaration/${declarationId}/pdf?${params.toString()}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/declaration/${declarationId}/pdf?${params.toString()}`, {
         method: 'GET',
         responseType: 'blob',
       });

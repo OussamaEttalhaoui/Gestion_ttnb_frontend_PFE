@@ -9,10 +9,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import DescriptionIcon from '@mui/icons-material/Description';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import PeopleIcon from '@mui/icons-material/People'; // Importez PeopleIcon
+import PeopleIcon from '@mui/icons-material/People'; 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useAuth } from './Auth'; // Importez le hook useAuth
-
+import { useAuth } from './Auth'; 
 const theme = createTheme({
   components: {
     MuiCssBaseline: {
@@ -39,7 +38,7 @@ const theme = createTheme({
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // Utilisez le hook useAuth
+  const { user } = useAuth();
 
   const handleNavigation = (route) => {
     navigate(route);

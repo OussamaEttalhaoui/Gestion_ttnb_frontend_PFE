@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import fetchWithAuth from '../utils/api'; // Assurez-vous que le chemin est correct
 import { saveAs } from 'file-saver'; // FileSaver.js pour les téléchargements
+import API_BASE_URL from '../utils/apiConfig'
 
-const API_BASE_URL = 'http://localhost:8036/api/creances';
 
 export const useCreanceDetailsLogic = () => {
     const { id } = useParams();
@@ -21,7 +21,7 @@ export const useCreanceDetailsLogic = () => {
 
     const fetchCreanceData = useCallback(async (creanceId) => {
         try {
-            const res = await fetchWithAuth(`${API_BASE_URL}/${creanceId}/details`);
+            const res = await fetchWithAuth(`${API_BASE_URL}/api/creances/${creanceId}/details`);
             if (!res.ok) {
                 throw new Error('Erreur lors de la récupération des détails de la créance.');
             }
@@ -68,11 +68,11 @@ export const useCreanceDetailsLogic = () => {
         try {
             // Logique de réinitialisation si l'état est "VALIDEE"
             if (etat === 'VALIDEE') {
-                await fetchWithAuth(`${API_BASE_URL}/details/${detailId}/quittance?numeroQuittance=`, { method: 'PUT' });
-                await fetchWithAuth(`${API_BASE_URL}/details/${detailId}/reference-internet?reference=`, { method: 'PUT' });
+                await fetchWithAuth(`${API_BASE_URL}/api/creances/details/${detailId}/quittance?numeroQuittance=`, { method: 'PUT' });
+                await fetchWithAuth(`${API_BASE_URL}/api/creances/details/${detailId}/reference-internet?reference=`, { method: 'PUT' });
             }
 
-            const res = await fetchWithAuth(`${API_BASE_URL}/details/${detailId}/etat?etat=${etat}`, {
+            const res = await fetchWithAuth(`${API_BASE_URL}/api/creances/details/${detailId}/etat?etat=${etat}`, {
                 method: 'PUT',
             });
 
@@ -124,12 +124,12 @@ export const useCreanceDetailsLogic = () => {
         try {
             if (selectedEtat === 'SOLDEE') {
                 await fetchWithAuth(
-                    `${API_BASE_URL}/details/${selectedDetailId}/quittance?numeroQuittance=${numeroQuittance}`,
+                    `${API_BASE_URL}/api/creances/details/${selectedDetailId}/quittance?numeroQuittance=${numeroQuittance}`,
                     { method: 'PUT' }
                 );
             } else if (selectedEtat === 'SOLDEE_PAR_INTERNET') {
                 await fetchWithAuth(
-                    `${API_BASE_URL}/details/${selectedDetailId}/reference-internet?reference=${referenceInternet}`,
+                    `${API_BASE_URL}/api/creances/details/${selectedDetailId}/reference-internet?reference=${referenceInternet}`,
                     { method: 'PUT' }
                 );
             }
@@ -150,7 +150,7 @@ export const useCreanceDetailsLogic = () => {
     const handleDateQuittanceChange = async (detailId, newDate) => {
         try {
             const res = await fetchWithAuth(
-                `${API_BASE_URL}/details/${detailId}/date-quittance?date=${newDate}`,
+                `${API_BASE_URL}/api/creances/details/${detailId}/date-quittance?date=${newDate}`,
                 { method: 'PUT' }
             );
 
@@ -172,7 +172,7 @@ export const useCreanceDetailsLogic = () => {
 
     const handleRefreshCreance = async () => {
         try {
-            const res = await fetchWithAuth(`${API_BASE_URL}/${id}/refresh`, { method: 'PUT' });
+            const res = await fetchWithAuth(`${API_BASE_URL}/api/creances/${id}/refresh`, { method: 'PUT' });
             if (!res.ok) {
                 throw new Error('Erreur lors du rafraîchissement de la créance.');
             }
@@ -187,7 +187,7 @@ export const useCreanceDetailsLogic = () => {
 
     const handlePrintBulletin = async () => {
         try {
-            const res = await fetchWithAuth(`${API_BASE_URL}/${id}/pdf`, { method: 'GET' });
+            const res = await fetchWithAuth(`${API_BASE_URL}/api/creances/${id}/pdf`, { method: 'GET' });
             if (!res.ok) {
                 throw new Error('Erreur lors de la récupération du PDF.');
             }
@@ -202,7 +202,7 @@ export const useCreanceDetailsLogic = () => {
     const handlePrintSituationFiscale = async (type) => {
         handleCloseSituationFiscaleMenu();
         try {
-            let endpoint = `${API_BASE_URL}/${id}/situation-fiscale/pdf?type=${type}`;
+            let endpoint = `${API_BASE_URL}/api/creances/${id}/situation-fiscale/pdf?type=${type}`;
             const res = await fetchWithAuth(endpoint, { method: 'GET' });
             if (!res.ok) {
                 throw new Error('Erreur lors de la récupération du PDF de la situation fiscale.');

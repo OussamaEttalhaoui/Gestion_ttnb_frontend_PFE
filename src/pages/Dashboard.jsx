@@ -9,8 +9,8 @@ import RechercheCreance from './RechercheCreance';
 import CreanceDetails from './CreanceDetails';
 import RechercheCreanceResultats from './RechercheCreanceResultats';
 import HomePage from './HomePage';
-import Profile from './Profile'; // Importez le composant Profile
-import Declaration from './Declaration'; // Importez le composant Declaration
+import Profile from './Profile'; 
+import Declaration from './Declaration'; 
 import Utilisateurs from './utilisateurs'
 import Exoneration from  './Exoneration';
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import fetchWithAuth from '../utils/api'; // Assurez-vous que le chemin est correct
 import { useAuth } from '../pages/Auth'; // Assurez-vous que le chemin est correct
+import API_BASE_URL from '../utils/apiConfig';
 
 // Fonction utilitaire déplacée dans le hook, car elle est nécessaire pour le filtrage
 function getNumeroBien(bien) {
@@ -23,7 +24,7 @@ export const useRecensementLogic = () => {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(4);
-  const apiUrl = 'http://localhost:8036/api/recensements';
+  const apiUrl = `${API_BASE_URL}/api/recensements`;
   
   // ----------------------------------------------------
   // LOGIQUE DE CHARGEMENT INITIALE

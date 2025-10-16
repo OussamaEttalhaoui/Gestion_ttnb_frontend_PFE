@@ -1,5 +1,3 @@
-// Fichier : src/components/RecensementStats.jsx
-
 import React from 'react';
 import { Card, CardContent, Box, Typography, Grid } from '@mui/material';
 import { Home, CalendarToday, FilterList } from '@mui/icons-material';
