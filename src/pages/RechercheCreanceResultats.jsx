@@ -326,7 +326,7 @@ const RechercheCreanceResultats = () => {
           <Button 
             variant="outlined" 
             sx={{ mt: 3, borderRadius: 2, textTransform: 'none' }}
-            onClick={() => navigate('/')} 
+            onClick={() => navigate('/recherche-creance')} 
           >
             Retourner à la recherche
           </Button>
