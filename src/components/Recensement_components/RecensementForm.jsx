@@ -482,7 +482,7 @@ export default function RecensementForm({ initialValues, onSave, onCancel }) {
                 fontWeight: 600,
               }}
             >
-              Propriétaire en indivision
+              Propriétaires en indivision
             </Button>
           </Box>
 
