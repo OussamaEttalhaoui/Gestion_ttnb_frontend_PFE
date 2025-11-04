@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 
 const primaryColor = '#1976d2';
 const secondaryColor = '#42a5f5';
-const exercicesPossibles = [2021, 2022, 2023, 2024, 2025];
+const exercicesPossibles = [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027,2028];
 
 export default function CreanceFormDialog({
   open, selected, form, errorMessage, handleClose, handleChange, handleDateChange, 

@@ -72,7 +72,7 @@ const HomePage = () => {
           bgcolor: '#f7f7fa', // Gris ciel
           textAlign: 'center',
           padding: 4,
-          pt: 8, // Ajoute du padding en haut pour l'espace
+          pt: 4, // Ajoute du padding en haut pour l'espace
           margin: 0,
         }}
       >

@@ -35,7 +35,7 @@ export default function TauxZoneDialog({ open, tauxZones, handleCloseTaux, handl
         color: 'white',
         py: 2.5
       }}>
-        Définir les taux par zone
+        Définition des taux
       </DialogTitle>
       <DialogContent sx={{ pt: 4 }}> 
         <Grid container spacing={2} pt={2}>

@@ -38,9 +38,9 @@ const zonesAffectation = [
   { value: 'IMMEUBLES', label: 'Zone Immeubles' },
   { value: 'VILLAS', label: 'Zone Villas' },
   { value: 'HABITAT', label: 'Zone Habitat' },
-  { value: 'SECTEUR_BIEN_EQUIPEE', label: 'Secteur Bien Equipée' },
-  { value: 'SECTEUR_MOYEN_EQUIPEE', label: 'Secteur Moyennement Equipée' },
-  { value: 'SECTEUR_MAL_EQUIPEE', label: 'Secteur Mal Equipée' },
+  { value: 'SECTEUR_BIEN_EQUIPEE', label: 'Secteur Bien Equipé' },
+  { value: 'SECTEUR_MOYEN_EQUIPEE', label: 'Secteur Moyennement Equipé' },
+  { value: 'SECTEUR_MAL_EQUIPEE', label: 'Secteur Non Equipé' },
   { value: 'AUTRE', label: 'Autre Zone' },
 ]
 

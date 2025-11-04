@@ -4,8 +4,13 @@ import { jwtDecode } from 'jwt-decode';
 import { Paper, Box, Typography, TextField, Button, Grid } from '@mui/material';
 import logoMaroc from '../assets/royaume_du_maroc.png';
 import API_BASE_URL from '../utils/apiConfig'
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 const AuthContext = createContext(null);
+
+
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate(); 
@@ -187,6 +192,10 @@ const Auth = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+ const theme = useTheme();
+ const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -237,20 +246,28 @@ const Auth = () => {
         </Box>
 
         {/* Paragraphes gauche et droite */}
-        <Grid container justifyContent="space-between" alignItems="flex-start">
-          <Grid item xs={4} sx={{ textAlign: 'left', pl: 18 }}> {/* Ajout de padding left */}
-            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
-              Ministère de l’Intérieur<br />
-              Wilaya de la Région de Marrakech-Safi
-            </Typography>
-          </Grid>
-          <Grid item xs={4} sx={{ textAlign: 'right', pr: 18 }}> {/* Ajout de padding right */}
-            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
-              Cercle Al Ouidane<br />
-              Caidat Al Ouidane
-            </Typography>
-          </Grid>
-        </Grid>
+        <Grid
+  container
+  justifyContent={isMobile ? 'center' : 'space-between'}
+  alignItems="flex-start"
+  spacing={isMobile ? 2 : 0}
+  sx={{ px: isMobile ? 2 : 18, mb: 2 }}
+>
+  <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'left' }}>
+    <Typography variant={isMobile ? 'body2' : 'body2'} sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
+      Ministère de l’Intérieur<br />
+      Wilaya de la Région de Marrakech-Safi
+    </Typography>
+  </Grid>
+
+  <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'right', mt: isMobile ? 1 : 0 }}>
+    <Typography variant={isMobile ? 'body2' : 'body2'} sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
+      Cercle Al Ouidane<br />
+      Caidat Al Ouidane
+    </Typography>
+  </Grid>
+</Grid>
+
 
         <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', mt: 2, color: '#1976d2', fontSize: '1.5rem' }}>
           Commune AL OUIDANE

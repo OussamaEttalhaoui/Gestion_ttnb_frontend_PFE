@@ -95,39 +95,58 @@ const Profile = () => {
       >
         
         {/* En-tête de Profil */}
-        <Box sx={{ display: 'flex', alignItems: 'center', pb: 3, borderBottom: `2px solid ${alpha(theme.palette.primary.main, 0.1)}` }}>
-          <Avatar sx={{ 
-            width: 70, 
-            height: 70, 
-            bgcolor: theme.palette.primary.main, 
-            mr: 3,
-            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)'
-          }}>
-            <AccountCircleIcon sx={{ fontSize: 50, color: 'white' }} /> 
-          </Avatar>
-          
-          <Box>
-            <Typography 
-              variant="h5" 
-              sx={{ fontWeight: 800, color: theme.palette.primary.dark, lineHeight: 1.2 }}
-            >
-              {profileData.prenom} {profileData.nom}
-            </Typography>
-            <Chip
-              icon={<WorkIcon />}
-              label={profileData.role}
-              color={roleColor}
-              variant="filled"
-              size="small"
-              sx={{ 
-                mt: 1, 
-                fontWeight: 700,
-                bgcolor: roleColor === 'error' ? theme.palette.error.main : theme.palette.primary.main,
-                color: 'white'
-              }}
-            />
-          </Box>
-        </Box>
+        <Box
+           sx={{
+             display: 'flex',
+             alignItems: 'center',
+             pb: 3,
+             borderBottom: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+             flexDirection: { xs: 'column', sm: 'row' }, // ← responsive
+             textAlign: { xs: 'center', sm: 'left' } // centrer sur mobile
+           }}
+         >
+           <Avatar
+             sx={{
+               width: 70,
+               height: 70,
+               bgcolor: theme.palette.primary.main,
+               mr: { xs: 0, sm: 3 },
+               mb: { xs: 1, sm: 0 }, // espace en bas sur mobile
+               boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)'
+             }}
+           >
+             <AccountCircleIcon sx={{ fontSize: 50, color: 'white' }} /> 
+           </Avatar>
+           
+           <Box>
+             <Typography
+               variant="h5"
+               sx={{
+                 fontWeight: 800,
+                 color: theme.palette.primary.dark,
+                 lineHeight: 1.2,
+                 wordBreak: 'break-word' // ← permet le retour à la ligne si le nom est long
+               }}
+             >
+               {profileData.prenom} {profileData.nom}
+             </Typography>
+             <Chip
+               icon={<WorkIcon />}
+               label={profileData.role}
+               color={roleColor}
+               variant="filled"
+               size="small"
+               sx={{
+                 mt: 1,
+                 fontWeight: 700,
+                 bgcolor: roleColor === 'error' ? theme.palette.error.main : theme.palette.primary.main,
+                 color: 'white',
+                 width: { xs: '100%', sm: 'auto' } // ← chip prend toute la largeur sur mobile
+               }}
+             />
+           </Box>
+         </Box>
+
 
         <Typography 
           variant="h6" 

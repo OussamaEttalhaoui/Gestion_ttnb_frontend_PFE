@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import {
   Box,
   Paper,
@@ -24,19 +24,16 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import LayersIcon from '@mui/icons-material/Layers';
 import API_BASE_URL from '../utils/apiConfig'
+import { Autocomplete } from "@react-google-maps/api";
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 
 // Google Maps
-import { GoogleMap, LoadScript, Marker, Circle, InfoWindow, Polygon } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker, Circle, InfoWindow, Polygon, DrawingManager } from "@react-google-maps/api";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-const containerStyle = {
-  width: "100%",
-  height: "450px", 
-  borderRadius: "12px",
-  boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)", 
-};
 
 // Fonction de mappage de couleur pour les résultats (MODIFIÉE)
 const getCategoryStyles = (category) => {
@@ -55,6 +52,9 @@ const getCategoryStyles = (category) => {
     }
 };
 
+
+
+
 export default function SituationMap() {
   const theme = useTheme();
 
@@ -67,6 +67,15 @@ export default function SituationMap() {
   const [selectedPlace, setSelectedPlace] = useState(null);
 
   const [alOuidanePolygon, setAlOuidanePolygon] = useState([]);
+
+  const [isDrawing, setIsDrawing] = useState(false); // Pour activer le dessin
+  const [polygonCoords, setPolygonCoords] = useState([]); // Stocke les coordonnées tracées
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600px - 900px
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // >900px 
+
+
 
   // --- Logique inchangée ---
   useEffect(() => {
@@ -81,6 +90,28 @@ export default function SituationMap() {
     };
     fetchPolygon();
   }, []);
+
+  const mapRef = useRef(null);
+
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
+
+//   useEffect(() => {
+//     if (mapRef.current && alOuidanePolygon.length > 0) {
+//       const bounds = new window.google.maps.LatLngBounds();
+//       alOuidanePolygon.forEach(p => bounds.extend(new window.google.maps.LatLng(p.lat, p.lng)));
+//       mapRef.current.fitBounds(bounds);
+//     }
+//   }, [alOuidanePolygon, mapRef.current]);
+useEffect(() => {
+    if (alOuidanePolygon.length > 0 && mapRef.current) {
+        const bounds = new window.google.maps.LatLngBounds();
+        alOuidanePolygon.forEach(p => bounds.extend(new window.google.maps.LatLng(p.lat, p.lng)));
+        mapRef.current.fitBounds(bounds);
+        setMapCenter(bounds.getCenter().toJSON()); // met à jour le center pour les markers
+    }
+}, [alOuidanePolygon, mapLoaded]);
+
 
   // --- Logique inchangée ---
   const handleSubmit = async (e) => {
@@ -122,11 +153,77 @@ export default function SituationMap() {
     }
   };
 
-  // Centre initial = premier point du polygone si pas de résultat
-  const center = result ? { lat: result.latitude, lng: result.longitude } : alOuidanePolygon[0];
+  // Centre initial 
+  const center = result
+    ? { lat: result.latitude, lng: result.longitude }
+    : alOuidanePolygon.length > 0
+      ? {
+          lat: alOuidanePolygon.reduce((sum, p) => sum + p.lat, 0) / alOuidanePolygon.length,
+          lng: alOuidanePolygon.reduce((sum, p) => sum + p.lng, 0) / alOuidanePolygon.length
+        }
+      : { lat: 0, lng: 0 }; // fallback
+
   // --- FIN Logique inchangée ---
 
   const categoryInfo = result ? getCategoryStyles(result.couleur) : {};
+
+  const handlePolygonClassification = async (polygon) => {
+  setLoading(true);
+  setError("");
+  setResult(null);
+
+  try {
+    console.log("➡️ Polygon envoyé au microservice Python :", polygon);
+
+    const res = await fetch("https://site--zone-classification-api--dvl7b6hjp5rp.code.run/classify_polygon", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        polygon: polygon.map(p => ({
+          lat: p.lat,  // ⚠️ garde lat en premier
+          lng: p.lng
+        }))
+      }),
+    });
+
+    if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
+    const data = await res.json();
+
+    console.log("✅ Résultat du microservice :", data);
+    setResult(data);
+  } catch (err) {
+    console.error("❌ Erreur classification polygone :", err);
+    setError("Erreur lors de la classification par polygone");
+  }
+
+  setLoading(false);
+};
+
+//   const handlePolygonClassification = async (polygon) => {
+//     setLoading(true);
+//     setError("");
+//     setResult(null);
+
+//     try {
+//         console.log("Polygon envoyé au backend :", polygon);
+//         const res = await fetchWithAuth(`${API_BASE_URL}/api/zones/classifier_polygon`, {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({ polygon })
+//         });
+
+
+//         if (!res.ok) throw new Error("Erreur serveur");
+//         const data = await res.json();
+//         console.log(data)
+//         setResult(data);
+//     } catch (err) {
+//         setError("Erreur lors de la classification par polygone");
+//     }
+
+//     setLoading(false);
+// };
+
 
   return (
     <Box sx={{ 
@@ -148,12 +245,20 @@ export default function SituationMap() {
             <LayersIcon color="primary" sx={{ fontSize: 36 }} /> Situation Géographique & Classification
         </Typography>
 
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 4 }}>
+        {/* <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 4 }}> */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: isMobile ? 2 : 4,
+            mb: 4,
+          }}
+        >
             
             {/* === FORMULAIRE ET RÉSULTATS STATUTAIRES === */}
             <Paper 
                 elevation={4} 
-                sx={{ p: 3, minWidth: 400, maxWidth: 500, borderRadius: 3, height: 'fit-content' }}
+                sx={{ p: 3,width: isMobile ? "100%" : 400, maxWidth: 500, borderRadius: 3, height: 'fit-content' }}
             >
                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: theme.palette.primary.dark }}>
                     <GpsFixedIcon sx={{ verticalAlign: 'middle', mr: 1 }} /> Paramètres de classification
@@ -197,6 +302,17 @@ export default function SituationMap() {
                     >
                         {loading ? <CircularProgress size={24} color="inherit" /> : "Classifier la Zone"}
                     </Button>
+                    <Button 
+                        variant="contained" 
+                        color="secondary"
+                        onClick={() => setIsDrawing(!isDrawing)}
+                        size="large"
+                        sx={{ mt: 1, fontWeight: 'bold', borderRadius: 2 }}
+                    >
+                        {isDrawing ? "Annuler le dessin" : "Classifier par Polygone"}
+                    </Button>
+                    
+
                 </Box>
                 
                 {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
@@ -208,16 +324,24 @@ export default function SituationMap() {
                             display: 'flex', 
                             alignItems: 'center', 
                             justifyContent: 'flex-start', 
-                            mb: 2 
+                            mb: 2 ,
+                            flexDirection: isMobile ? 'column' : 'row', // ← ajoute cette ligne
+                            gap: 1 
                         }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600, mr: 2 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 600, mr: isMobile ? 0 : 2  }}>
                                 Résultat de la classification :
                             </Typography>
                             
                             <Chip
                                 label={categoryInfo.label}
                                 color={categoryInfo.color}
-                                sx={{ fontWeight: 'bold', fontSize: '1rem', height: 32 }}
+                                sx={{ 
+                                    fontWeight: 'bold', 
+                                    fontSize: '1rem', 
+                                    height: 32,
+                                    width: isMobile ? '100%' : 'auto', 
+                                    textAlign: 'center'
+                                }}
                             />
                         </Box>
                         
@@ -246,16 +370,38 @@ export default function SituationMap() {
                     </Box>
                 )}
             </Paper>
+            
 
             {/* === CARTE INTERACTIVE === */}
-            <Box sx={{ minWidth: 400, maxWidth: 800, flexGrow: 1 }}>
-                <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={["places"]}>
-                    <GoogleMap 
-                        mapContainerStyle={containerStyle} 
-                        center={center} 
-                        zoom={13} 
-                        mapTypeId="satellite"
-                    >
+             <Box
+                sx={{
+                width: isMobile ? "100%" : isTablet ? "100%" : "calc(100% - 420px)",
+                height: isMobile ? 300 : isTablet ? 400 : 450,
+                  borderRadius: 3,
+                  boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+                }}
+              >
+              {alOuidanePolygon.length === 0 ? (
+                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 }}>
+                   <CircularProgress />
+                 </Box>
+               ) : (
+                <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={["places", "drawing"]}>
+                    
+                    <GoogleMap
+                    //    onLoad={map => (mapRef.current = map)}
+                    onLoad={map => {
+                        mapRef.current = map;
+                        setMapLoaded(true); // indique que la map est prête
+                    }}
+                       mapContainerStyle={{
+                         width: "100%",
+                         height: isMobile ? "300px" : "450px",
+                       }}
+                       center={center}
+                       zoom={13}
+                       mapTypeId="satellite"
+                     >
                         
                         {/* Polygone Al Ouidane toujours visible */}
                         <Polygon
@@ -268,6 +414,50 @@ export default function SituationMap() {
                                 fillOpacity: 0.4,
                             }}
                         />
+   
+
+                        {/* Polygone tracé par l'utilisateur */}
+                        {polygonCoords.length > 0 && (
+                            <Polygon
+                                paths={polygonCoords}
+                                options={{
+                                    strokeColor: "#FF0000",
+                                    strokeOpacity: 0.9,
+                                    strokeWeight: 2,
+                                    fillColor: alpha(theme.palette.error.main, 0.2),
+                                    fillOpacity: 0.4,
+                                }}
+                            />
+                        )}
+
+                        {/* DrawingManager */}
+                        {isDrawing && (
+                            <DrawingManager
+                                onPolygonComplete={(polygon) => {
+                                    const path = polygon.getPath().getArray().map(p => ({ lat: p.lat(), lng: p.lng() }));
+                                    setPolygonCoords(path);
+                                    setIsDrawing(false);
+                                    handlePolygonClassification(path); // Appel de la classification par polygone
+                              
+                                }}
+                                options={{
+                                    drawingControl: true,
+                                    drawingControlOptions: {
+                                        position: window.google.maps.ControlPosition.TOP_CENTER,
+                                        drawingModes: ['polygon']
+                                    },
+                                    polygonOptions: {
+                                        fillColor: '#FF0000',
+                                        fillOpacity: 0.2,
+                                        strokeWeight: 2,
+                                        clickable: true,
+                                        editable: true,
+                                        zIndex: 1
+                                    }
+                                }}
+                            />
+                        )}
+
 
                         {/* Marqueur + Cercle (logique inchangée) */}
                         {result && (
@@ -349,6 +539,7 @@ export default function SituationMap() {
                         )}
                     </GoogleMap>
                 </LoadScript>
+                )}
             </Box>
         </Box>
 
@@ -423,3 +614,7 @@ export default function SituationMap() {
     </Box>
   );
 }
+
+
+
+
