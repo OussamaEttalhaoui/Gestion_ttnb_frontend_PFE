@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const orangeColor = '#ed6c02';
 const orangeSecondaryColor = '#ff9800';
-const exercicesPossibles = [2021, 2022, 2023, 2024, 2025];
+const exercicesPossibles = [2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030];
 
 export default function CalculTaxeDialog({
   open, calculTaxeForm, calculTaxeResult, errorMessage, handleCloseCalculTaxe, 

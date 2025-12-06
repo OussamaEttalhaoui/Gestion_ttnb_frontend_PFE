@@ -15,7 +15,7 @@ const zonesPossibles = [
   { value: 'HABITAT', label: 'Zone Habitat' },
   { value: 'SECTEUR_BIEN_EQUIPEE', label: 'Secteur Bien Equipée' },
   { value: 'SECTEUR_MOYEN_EQUIPEE', label: 'Secteur Moyennement Equipée' },
-  { value: 'SECTEUR_MAL_EQUIPEE', label: 'Secteur Mal Equipée' },
+  { value: 'SECTEUR_MAL_EQUIPEE', label: 'Secteur faiblement Equipée' },
   { value: 'AUTRE', label: 'Autre Zone' },
 ];
 

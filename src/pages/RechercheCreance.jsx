@@ -265,8 +265,8 @@ const RechercheCreance = () => {
               label="État de la créance"
             >
               <MenuItem value="none"><em>Aucun</em></MenuItem>
-              <MenuItem value="SOLDEE_PAR_INTERNET">Soldée par Internet</MenuItem>
-              <MenuItem value="SOLDEE">Soldée</MenuItem>
+              <MenuItem value="SOLDEE_PAR_INTERNET">Soldée en ligne e-service</MenuItem>
+              <MenuItem value="SOLDEE">Soldée Régie</MenuItem>
               <MenuItem value="VALIDEE">Validée</MenuItem>
             </Select>
           </FormControl>

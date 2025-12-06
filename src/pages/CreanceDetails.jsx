@@ -173,7 +173,7 @@ const CreanceDetails = () => {
         </Grid>
 
         {/* Tableau des détails de la créance (par année) */}
-        <InfoSection title="Détails de la créance (par année)" sx={{ mt: 3 }}>
+        <InfoSection title="Détails de la créance (par Exercices)" sx={{ mt: 3 }}>
           <TableContainer sx={{ maxHeight: 600, overflowX: 'auto' }}>
             <Table stickyHeader size="small" sx={{ minWidth: 900 }}>
               <TableHead>
@@ -306,6 +306,9 @@ const CreanceDetails = () => {
             </MenuItem>
             <MenuItem onClick={() => handlePrintSituationFiscale('EtatPaiement')}>
               <ListItemText>État de Paiement (État Soldée)</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handlePrintSituationFiscale('ALL')}>
+              <ListItemText>ALL (Validées + Soldées)</ListItemText>
             </MenuItem>
           </Menu>
         </Box>
