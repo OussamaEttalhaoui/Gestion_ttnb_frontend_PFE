@@ -83,7 +83,7 @@ const HomePage = () => {
         </Typography>
 
         <Typography variant="body1" sx={{ mb: 4, maxWidth: 600 }}>
-          Conformément aux dispositions de la loi n°07.20 en date du 31 décembre 2020 modifiant et complétant la loi n° 47.06 relative à la fiscalité des collectivités locales, notamment les articles 39-49.
+          Conformément aux dispositions de la loi n°14.25 en date du 05 juin 2025 modifiant et complétant la loi n° 47.06 relative à la fiscalité des collectivités territoriale, notamment les articles 39-49.
         </Typography>
 
         <Grid container spacing={4} justifyContent="center">
