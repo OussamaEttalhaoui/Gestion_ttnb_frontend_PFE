@@ -245,52 +245,30 @@ const Auth = () => {
           </Typography>
         </Box>
 
-        {/* Paragraphes gauche et droite */}
-        {/* <Grid
-  container
-  justifyContent={isMobile ? 'center' : 'space-between'}
-  alignItems="flex-start"
-  spacing={isMobile ? 2 : 0}
-  sx={{ px: isMobile ? 2 : 18, mb: 2 }}
->
-  <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'left' }} >
-    <Typography variant={isMobile ? 'body2' : 'body2'} sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
-      Ministère de l’Intérieur<br />
-      Wilaya de la Région de Marrakech-Safi
-    </Typography>
-  </Grid>
-
-  <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'right', mt: isMobile ? 1 : 0 }}>
-    <Typography variant={isMobile ? 'body2' : 'body2'} sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
-      Cercle Al Ouidane<br />
-      Caidat Al Ouidane
-    </Typography>
-  </Grid>
-</Grid> */}
-
-<Grid
-  container
-  justifyContent={isMobile ? 'center' : 'space-between'}
-  alignItems="flex-start"
-  spacing={isMobile ? 2 : 0}
-  sx={{ px: isMobile ? 2 : 18, mb: 2 }}
->
-  <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'left' }}>
-    <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
-      <span style={{ marginLeft: isMobile ? 0 : '55px', display: 'inline-block' }}>
-        Ministère de l’Intérieur
-      </span><br />
-      Wilaya de la Région de Marrakech-Safi
-    </Typography>
-  </Grid>
-
-  <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'right', mt: isMobile ? 1 : 0 }}>
-    <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
-      Cercle Al Ouidane<br />
-      Caidat Al Ouidane
-    </Typography>
-  </Grid>
-</Grid>
+        
+        <Grid
+          container
+          justifyContent={isMobile ? 'center' : 'space-between'}
+          alignItems="flex-start"
+          spacing={isMobile ? 2 : 0}
+          sx={{ px: isMobile ? 2 : 18, mb: 2 }}
+        >
+          <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'left' }}>
+            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
+              <span style={{ marginLeft: isMobile ? 0 : '55px', display: 'inline-block' }}>
+                Ministère de l’Intérieur
+              </span><br />
+              Wilaya de la Région de Marrakech-Safi
+            </Typography>
+          </Grid>
+        
+          <Grid item xs={12} sm={4} sx={{ textAlign: isMobile ? 'center' : 'right', mt: isMobile ? 1 : 0 }}>
+            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
+              Cercle Al Ouidane<br />
+              Caidat Al Ouidane
+            </Typography>
+          </Grid>
+        </Grid>
 
 
 
