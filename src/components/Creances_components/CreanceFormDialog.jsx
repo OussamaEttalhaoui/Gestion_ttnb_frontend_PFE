@@ -99,6 +99,35 @@ export default function CreanceFormDialog({
                 </MenuItem>
               ))}
             </Select>
+            {form.exercices.length > 0 && (
+              <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {form.exercices.map(ex => (
+                  <TextField
+                    key={ex}
+                    type="number"
+                    label={`Taux pour ${ex} (DH)`}
+                    value={form.tauxParExercice[ex] || ''}
+                    onChange={(e) =>
+                      handleChange({
+                        target: {
+                          name: 'tauxParExercice',
+                          value: { 
+                            ...form.tauxParExercice,
+                            [ex]: Number(e.target.value)
+                          }
+                        }
+                      })
+                    }
+                    fullWidth
+                    required
+                    disabled={!canSubmit}
+                    variant="outlined"
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                ))}
+              </Box>
+            )}
+
           </FormControl>
         </Box>
       </DialogContent>

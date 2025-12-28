@@ -26,6 +26,7 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
     dateConstatation: dayjs(),
     avecDeclaration: false,
     exercices: [],
+    tauxParExercice: {}, // <-- AJOUT
     montantTaxe: 0,
   });
 
@@ -142,13 +143,23 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
     setErrorMessage('');
   }, []);
 
-  const handleChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  }, []);
+  // const handleChange = useCallback((e) => {
+  //   const { name, value, type, checked } = e.target;
+  //   setForm(prev => ({
+  //     ...prev,
+  //     [name]: type === 'checkbox' ? checked : value
+  //   }));
+  // }, []);
+  const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
+
+  setForm(prev => ({
+    ...prev,
+    [name]: type === 'checkbox' ? checked : value
+  }));
+};
+
+  
 
   const handleDateChange = useCallback((date) => {
     setForm(prev => ({
@@ -157,12 +168,41 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
     }));
   }, []);
 
-  const handleExercicesChange = useCallback((e) => {
-    setForm(prev => ({
-      ...prev,
-      exercices: e.target.value
-    }));
-  }, []);
+  // const handleExercicesChange = useCallback((e) => {
+  //   setForm(prev => ({
+  //     ...prev,
+  //     exercices: e.target.value
+  //   }));
+  // }, []);
+  const handleExercicesChange = (event) => {
+    const { value } = event.target;
+    const selectedExercices = typeof value === 'string' ? value.split(',') : value;
+  
+    setForm(prev => {
+      const updatedTaux = { ...prev.tauxParExercice };
+  
+      // Ajouter un taux par défaut pour les nouveaux exercices
+      selectedExercices.forEach(ex => {
+        if (!(ex in updatedTaux)) {
+          updatedTaux[ex] = 0;
+        }
+      });
+  
+      // Supprimer les taux des exercices non sélectionnés
+      Object.keys(updatedTaux).forEach(ex => {
+        if (!selectedExercices.includes(parseInt(ex))) {
+          delete updatedTaux[ex];
+        }
+      });
+  
+      return {
+        ...prev,
+        exercices: selectedExercices,
+        tauxParExercice: updatedTaux
+      };
+    });
+  };
+
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
@@ -175,10 +215,21 @@ export function useCreancesLogic(user, getComparator, getBienIdentifier) {
     if (!selected && !hasCreatePermission) return;
 
     try {
-      const dataToSend = {
-        ...form,
-        dateConstatation: form.dateConstatation ? form.dateConstatation.format('YYYY-MM-DD') : null,
-      };
+      // const dataToSend = {
+      //   ...form,
+      //   dateConstatation: form.dateConstatation ? form.dateConstatation.format('YYYY-MM-DD') : null,
+      // };
+      const exercicesTauxEntries = Object.entries(form.tauxParExercice)
+  .filter(([_, taux]) => taux !== 0 && taux !== null && taux !== undefined)
+  .map(([annee, taux]) => ({ annee: Number(annee), taux }));
+
+const dataToSend = {
+  ...form,
+  dateConstatation: form.dateConstatation ? form.dateConstatation.format('YYYY-MM-DD') : null,
+  ...(exercicesTauxEntries.length > 0 && { exercicesTaux: exercicesTauxEntries }) // <-- envoyer seulement si non vide
+};
+
+
 
       let res;
       // Logique d'appel API pour Création/Modification (avec téléchargement PDF)
