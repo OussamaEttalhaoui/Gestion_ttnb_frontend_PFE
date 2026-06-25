@@ -115,17 +115,19 @@ The system then applies a rule-based decision model to classify the area into th
 - Google Places API
 - OpenStreetMap Overpass API
 - Google Earth Engine (VIIRS)
-- Axios (API communication) & WebSocket (real-time notifications)
 
 ### Frontend
 - React.js
 - Tailwind CSS
 - Material UI
 - @react-google-maps/api
+- Axios (API communication) & WebSocket (real-time notifications)
+
 
 ### Tools
 - Postman
 - Git / GitHub
+- Swagger
 
 ---
 
