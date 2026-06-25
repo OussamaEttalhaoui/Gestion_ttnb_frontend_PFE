@@ -1,7 +1,3 @@
-# 🛰️ Intelligent Framework for Undeveloped Land Tax Management (TTNB)
-
-## 📌 Overview
-
 # 🛰️ TTNB Management System — Intelligent Framework for Undeveloped Land Tax Management
 
 ## 📌 Overview
