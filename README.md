@@ -2,87 +2,105 @@
 
 ## 📌 Overview
 
-This project is an **intelligent geospatial decision-support system** for the management of the **Tax on Undeveloped Land (TTNB)**.
+# 🛰️ TTNB Management System — Intelligent Framework for Undeveloped Land Tax Management
+
+## 📌 Overview
+
+This project is a **full-stack geospatial decision-support application** for the management and automation of the **Tax on Undeveloped Land (TTNB)**.
 
 It combines:
-- Satellite imagery (nighttime lights)
+- Satellite imagery (VIIRS nighttime lights)
 - Geospatial APIs (Google Places, OpenStreetMap)
-- Web technologies
-- Machine learning-inspired decision rules
+- Modern web technologies (React + Spring Boot)
+- Intelligent classification algorithms
 
-The system automates:
-- Land classification (urban development level)
-- Tax lifecycle management
-- Administrative operations (declarations, exemptions, payments)
-- Interactive geospatial visualization
+The system supports both **tax administration workflows** and **automated territorial analysis** for urban planning and fiscal decision-making.
+
+---
+
+## ⚠️ Repository Scope
+
+This repository contains **only the FRONTEND application (React.js)**.
+
+The backend services are **private due to project confidentiality**:
+- 🔒 Spring Boot backend (business logic, security, PDF, tax engine)
+- 🔒 Python FastAPI microservice (geospatial classification engine)
+
+The frontend interacts with these services through secured REST APIs.
 
 ---
 
 ## 🎯 Key Features
 
-- 🗺️ Automatic classification of land (Green / Orange / Red zones)
-- 🛰️ Satellite-based urbanization analysis (VIIRS Night Lights)
-- 📍 POI extraction (schools, hospitals, transport, etc.)
-- 🧠 Semantic classification of infrastructures
-- 📄 Automated tax calculation and PDF generation
-- 💳 Debt and payment management
-- 🏛️ Exemption handling with notifications
-- 👥 User and role management (Admin / Agent)
-- 🧭 Interactive map-based interface
+- 💳 Tax lifecycle management interface
+- 🧾 Census, debts, exemptions, and declarations management
+- 👥 Role-based user administration (Admin / User)
+- 🔔 Real-time notifications (WebSocket integration)
+- 🗺️ Interactive GIS dashboard (Google Maps integration)
+- 🛰️ AI-based land classification (Green / Orange / Red zones)
+- 📍 Infrastructure visualization (schools, hospitals, roads, etc.)
+- 📄 Automated PDF generation (via backend APIs)
+
 
 ---
 
 ## 🏗️ System Architecture
 
-The system follows a **microservices architecture**:
-
-### 1. Geospatial Microservice (FastAPI - Python)
-- Land classification engine
-- Integration of:
-  - Google Places API
-  - OpenStreetMap (Overpass API)
-  - NOAA VIIRS Nighttime Lights
-- Geospatial computation (radius, polygons, projections)
-
-### 2. Backend Core (Spring Boot - Java)
-- Business logic (TTNB lifecycle)
-- Authentication & security (JWT)
-- Tax calculation engine
-- PDF generation (receipts, certificates)
-- REST API integration with microservice
-
-### 3. Frontend (React.js)
-- Interactive GIS dashboard
-- Google Maps integration (@react-google-maps/api)
-- Visualization of:
-  - Classified zones
-  - Infrastructures
-  - Statistical tables
+- **Frontend (this repo):** React.js + Map visualization + UI/UX layer  
+- **Backend (private):** Spring Boot (JWT, business logic, tax system, PDF generation)  
+- **Microservice (private):** FastAPI Python (geospatial + satellite classification)
 
 ---
 
-## 🧠 Land Classification Logic
+## 🧠 Core Modules (Application Functionalities)
 
-Each area is analyzed using multiple data sources:
+### 📊 Census Management
+Manages taxpayers (individuals or organizations) and their land properties.  
+Supports property registration, updates, and deletion with full classification of land types (registered, in progress, unregistered).
 
-### 📡 Data Sources
-- Google Places API → Schools, hospitals, transport
-- OpenStreetMap → Roads, water, electricity
-- VIIRS Nighttime Lights → Urban intensity
+---
 
-### ⚙️ Processing Steps
-1. Define area (coordinates or polygon)
-2. Convert projection (Lambert → WGS84)
-3. Extract POIs within radius
-4. Detect infrastructure types (semantic + keyword matching)
-5. Compute density indicators
-6. Evaluate nightlight intensity
-7. Apply decision model
+### 💰 Tax Debt Management
+Automatic computation of TTNB based on surface, zone type, penalties, and legal rules.  
+Generates payment slips (BV) and detailed PDF tax summaries per fiscal year.
 
-### 🏷️ Final Output
-- 🟢 Well-equipped area
-- 🟠 Moderately equipped area
-- 🔴 Poorly equipped area
+---
+
+### 📄 Declaration Module
+Generates official declaration PDFs (ownership or mutation).  
+Data is auto-filled based on property ID and stored records.
+
+---
+
+### ⚖️ Tax Regulation Module
+Allows searching, updating, and settling tax debts.  
+Supports filtering by taxpayer, property, or fiscal year with full payment tracking.
+
+---
+
+### 🧾 Tax Rate Configuration (Admin Only)
+Defines and manages taxation rates by zone type (urban, villa, rural, etc.).  
+Ensures consistency of automatic tax computation rules.
+
+---
+
+### 👥 User Management (Admin Only)
+Full CRUD management of system users with roles and permissions (Create, Read, Update, Delete).  
+Ensures secure access control and auditability across the platform.
+
+---
+
+### 🏛️ Exemption Management
+Handles temporary tax exemptions based on land conditions (unserviceable land, construction bans, agricultural zones, etc.).  
+Includes automated expiration detection and real-time notifications via WebSocket.
+
+---
+
+### 🛰️ Land Classification Module (External Service)
+This module evaluates the level of urban development of a geographic area using its Lambert coordinates (X, Y) and a configurable analysis radius.  
+It relies on a FastAPI microservice combining Google Places, OpenStreetMap, and NOAA VIIRS satellite data to extract infrastructures, physical networks, and nightlight intensity.  
+The system then applies a rule-based decision model to classify the area into three zones (highly, moderately, or poorly equipped) returned as structured JSON to the backend.
+
 
 ---
 
@@ -101,6 +119,7 @@ Each area is analyzed using multiple data sources:
 - Google Places API
 - OpenStreetMap Overpass API
 - Google Earth Engine (VIIRS)
+- Axios (API communication) & WebSocket (real-time notifications)
 
 ### Frontend
 - React.js
